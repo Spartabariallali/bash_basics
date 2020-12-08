@@ -1,0 +1,21 @@
+* Configuration and installation of AWS CLI and S3
+* Prepare the Bucket
+* Use the S3 Bucket in a container 
+
+
+--- install aws cli --- 
+
+1. pip install --upgrade --user awscli
+2. sudo cp -r ~/.aws /root - moving aws credentials to root user from home directory
+
+
+--- configure S3 bucket ---
+
+1. sudo yum install s3fs-fuse -y 
+
+--- Create mount-point on the server ---
+
+1. sudo mkdir /mnt/widget-factory
+2. export BUCKET<s3_bucket_name>
+3. sudo s3fs $BUCKET /mnt/widget-factory -o allow_other -o default_acl=public-read -o use_cache=/tmp/s3fs
+4. 
