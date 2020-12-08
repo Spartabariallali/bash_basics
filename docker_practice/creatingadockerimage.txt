@@ -1,0 +1,41 @@
+--- creating base image for application ---
+
+1. docker pull httpd:2.4
+2. docker run --name webtemplate -d httpd:2.4 
+
+
+--- loging into the httpd container ---
+
+1. docker exec -it webtemplate bash
+2. apt get-update && apt install git
+3. Once git is installed clone the following repository
+   git clone https://github.com/linuxacademy/content-widget-factory-inc.
+4. ls -l htdocs/ 
+5. rm index.html (default html page that exists) 
+6. move the web directory into htdocs directory 
+   cp -r /tmp/widget-factory-inc/web/* htdocs/ 
+7. exit out of the container 
+
+
+
+--- creating an image from the container --- 
+
+1. docker ps (to find docker container id)
+2. docker commit <docker id> example/widgetfactory:v1
+3. docker images - compare newly created container with bsse image
+
+--- Clean up container image ---
+
+1. docker exec -it webtemplate bash
+2. rm -rf /tmp/widget-factory-inc/ 
+3. remove git and any cached files
+   apt remove git -y && apt autoremove -y && apt clean 
+4. docker ps - to obtain container id
+5. docker commit <docker id> example/widgetfactory:v2
+
+--- remove docker images ---
+
+1. docker rmi example/widgetfactory:v1 
+
+
+
