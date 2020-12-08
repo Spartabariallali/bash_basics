@@ -18,4 +18,18 @@
 1. sudo mkdir /mnt/widget-factory
 2. export BUCKET<s3_bucket_name>
 3. sudo s3fs $BUCKET /mnt/widget-factory -o allow_other -o default_acl=public-read -o use_cache=/tmp/s3fs
-4. 
+4. ll /mnt/widget-factory
+5. cp -r ~/widget-factory-inc/web/* /mnt/widget-factory
+6. ll /mnt/widget-factory
+7. aws s3 ls s3://$BUCKET
+
+
+--- Use S3 bucket files in docker container --- 
+
+1. docker run -d --name web1 -p 80:80 --mount type=bind,source=/mnt/widget-factory,target=/usr/local/apache2/htdocs,readonly httpd:2.4
+2. SERVER_PUBLIC_IP_ADDRESS
+3. cd /mnt/widget-factory
+4. cp index.html newPage.html
+5. <SERVER_PUBLIC_IP_ADDRESS>:newPage.html
+6. aws s3 ls $BUCKET
+ 
