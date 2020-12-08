@@ -37,4 +37,6 @@
 
 --- back up files from container (bypass root user privilages) ---
 
-1.  
+1. docker run -it --rm -v website:/website -v /tmp:/backup bash tar czf /backup/website_$(date +%Y-%m-%d-%H-%M).tgz -C /website . 
+
+  
