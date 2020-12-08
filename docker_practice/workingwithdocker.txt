@@ -1,0 +1,50 @@
+1. docker pull httpd:latest 
+2. docker images - to view all the images available 
+3. docker run docker run --name httpd -p 8080:80 -d httpd:latest
+4. docker ps - shows running containers 
+5. 8080:80 to verify the container is working
+
+1. git clone https://github.com/linuxacademy/content-widget-factory-inc.
+2. cd content-widget-factory-inc/
+3. cd web
+
+--- Ensure docker container is stopped ---
+
+1. docker stop httpd 
+2. docker rm httpd 
+
+mount the application via volume 
+
+1. docker run --name httpd -p 8080:80 -v $(pwd)/web:/usr/local/apache2/htdocs:ro -d 
+2. verify the web-browser <public_ip_address>: 8080
+
+
+--- running and additional web-browser container ---
+
+1. docker pull nginx:latest
+2. docker images 
+3. docker run --name nginx -p 8081:80 -d nginx
+4. docker images
+
+
+
+--- stop the nginx container ---
+
+1. docker stop nginx 
+2. docker ps -a (if nginx container still exists proceed to step three)
+3. docker rm nginx
+
+
+--- Mount content into the nginx container ---
+1. docker run --name nginx -p 8081:80 -v ./web:/usr/share/nginx/html:ro -d nginx 
+or docker run --name nginx -p 8080:81 -v $(pwd)/web:/usr/share/nginx/html:ro -d nginx
+2. <public_ip_address>:8081 -> should take you to the webpage 
+ 
+
+
+
+
+
+
+
+

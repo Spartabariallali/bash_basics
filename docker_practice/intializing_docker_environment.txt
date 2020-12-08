@@ -1,0 +1,22 @@
+# initializing the docker run time environment within a centos 7 server 
+
+1. sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+
+2. sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+3. sudo yum -y install docker-ce
+
+----- Enable docker daemon ------
+
+1. sudo systemctl enable --now docker
+
+2. sudo usermod -aG docker cloud_user
+
+
+2.sudo usermod -aG docker cloud_user
+
+
+3.run a test image 
+
+- docker run hello-world
+
