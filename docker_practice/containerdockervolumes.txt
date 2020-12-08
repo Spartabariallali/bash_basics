@@ -1,0 +1,26 @@
+--- viewing a containers volume ---
+
+1. docker run -d --name db1 postgres:12.1
+2. docker run -d --name db2 postgres:12.1
+3. docker ps 
+4. docker volumes ls 
+   
+5. docker inspect db1 -f '{{ json .Mounts }}' | python -m json.tool
+  returns the mount information for that specific contatiner 
+
+6. docker run -d -rm --name dbtemp postgres:12.1
+
+--- creating a docker volume ---
+
+1. docker volume create website <name of volume>
+2. sudo cp -r /home/cloud_user/widget-factory-inc/web/* /var/lib/docker/volumes/websites/_data/ 
+3. sudo ls -l /var/lib/docker/volumes/websites/_data/
+
+--- attatching volume to container --- 
+
+1. docker run -d --name web1 - 80:80 -v website:/usr/local/apache2/htdocs:ro httpd:2.4
+2. docker run -d --name webTemp --rm -v website:/usr/local/website/apache2/htdocs:ro httpd:2.4
+3. docker exec -it webTemp bash
+4. ls -l htdocs - view the website files 
+
+ 
