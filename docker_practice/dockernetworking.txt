@@ -17,6 +17,10 @@
 1. docker network create test_application 
 2. docker network ls 
 3. docker run -d --name web2 --network test_application httpd:2.4 
+4. docker inspect 
 
+--- creating a host network ---
 
+1. docker run -d --name web3  --network host httpd:2.4
+2. docker ps -a 
 

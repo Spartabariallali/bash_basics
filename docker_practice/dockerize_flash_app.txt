@@ -1,0 +1,108 @@
+# Dockerize a Flask application
+*create the build files to initiate the dockerized application 
+*Build and setup environment 
+*Run the application and watch the logs to ensure everything is working.
+* upgrade to gunicorn 
+*build production image
+
+
+--- create dockerignorefile ---
+
+1. vim/touch .dockerignore 
+.dockerignore 
+Dockerfile
+Pipfile.lock
+migrations/
+
+--- create dockerfile for flask application ---
+
+1. touch/vim Dockerfile 
+FROM python:3
+ENV PYBASE /pybase
+ENV PYTHONUSERBASE $PYBASE
+ENV PATH $PYBASE/bin:$PATH 
+RUN pip install pipenv 
+
+WORKDIR /tmp
+COPY Pipfile .
+RUN pipenv lock
+RUN PIP_USER=1 PIP_IGNORE_INSTALLED=1 pipenv install -d --system --ignore-pipfile
+
+COPY . /app/notes 
+WORKDIR /app/notes 
+EXPOSE 80
+CMD ["flask" ,"run","--port=80","--host=0.0.0.0"] 
+2. docker build -t notesapp:0.1 .
+
+--- Run a container using the notesapp image and mount the migrations directory ---
+
+1. docker run --rm -it --network notes -v /home/cloud_user/notes/migrations:/app/notes/migrations notesapp:0.1 bash
+
+2. flask db init 
+
+3.ls -l migrations
+
+4. flask db migrate 
+
+5. flask db upgrade 
+
+--- Run, Evaluate and Upgrade ---
+
+1. run the container using the notesapp:01 image 
+
+docker run --rm -it --network notes -p 80:80 notesapp:0.1
+ 
+
+2. using a web browser access the public ip address for the server
+
+3. Remove the 'export FLASK_ENV='development' 
+
+
+--- re-build the image ---
+
+1. docker build -t notesapp:0.2 .
+
+2. docker run --rm -it --network notes -p 80:80 notesapp:0.2
+
+
+
+--- upgrade to GUNICORN ---
+
+1. check the Pipefile 
+
+cat Pipfile
+
+
+2. docker run --rm -it -v /home/cloud_user/notes/Pipfile:/tmp/Pipfile notesapp:0.2 bash
+
+3. change to the /tmp directory 
+   cd /tmp 
+
+4. add gunicorn to the list of dependencies 
+   pip install gunicorn 
+
+5. modify the init.py script 
+   beneath the import section add the following:
+   from dotenv import load_dotenv, find_dotenv
+load_dotenv(find_dotenv())
+
+6. edit the Dockerfile 
+
+  modify the CMD command:
+  COPY . /app/notes
+  WORKDIR /app
+  EXPOSE 80
+  CMD ["gunicorn", "-b 0.0.0.0:80", "notes:create_app()"]
+
+
+--- build production image ----
+
+1. docker build -t notesapp:0.3
+2. docker run -d --name notesapp --network notes -p 80:80 notesapp:0.3
+3. docker ps -a 
+
+
+
+
+
+
