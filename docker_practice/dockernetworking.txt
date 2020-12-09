@@ -1,0 +1,22 @@
+# Docker container networking 
+
+--- viewing docker network ---
+
+1. docker network ls 
+2. 3 basic networks: bridge, host and none 
+3. docker run -d --name web1 httpd:2.4 - run a httpd container named web1 to see which network it is assigned be default 
+4. docker inspect web1 
+5. take note of the ip address 
+6. docker run --rm -it busybox 
+7. check the busybox container ip - ip addr 
+8. ping <web1_ip_address>
+
+
+--- creating a bridge network (default) ---
+
+1. docker network create test_application 
+2. docker network ls 
+3. docker run -d --name web2 --network test_application httpd:2.4 
+
+
+
