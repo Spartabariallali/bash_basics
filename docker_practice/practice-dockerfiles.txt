@@ -1,0 +1,34 @@
+# building an image from dockerfiles 
+
+* Use a dockerfile to define and build your image 
+* Remove the apache welcome page and then add own website data to the image 
+* start a container using the finished image and verify it is working by checking the webpage 
+
+
+--- creating a dockerfile ---
+
+1. cd into the directory that contains the app source files 
+2. touch/vim Dockerfile 
+
+FROM httpd:2.4
+RUN apt update -y && apt upgrade -y && apt clean && rm -rf /var/lib/apt/lists/*
+RUN rm -f /usr/local/apache2/htdocs/index.html 
+WORKDIR /usr/local/apache2/htdocs 
+COPY ./web . 
+
+--- Building an image from Dockerfile ---
+
+1. docker build -t widgetfactory:01 .
+2. docker run --rm -it widgetfactory:01 bash
+
+
+--- build container from image ---
+
+1. docker run --name web1 -p 80:80 widgetfactory:01 
+
+
+
+
+
+
+ 
