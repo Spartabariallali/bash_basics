@@ -1,0 +1,106 @@
+# creating a kubernetes cluster with docker 
+
+--- configure the kubernetes cluster ---
+
+1. *on all three servers - do the following* 
+    cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
+
+2. [kubernetes]
+   name=Kubernetes
+   baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+   enabled=1
+   gpgcheck=1
+   repo_gpgcheck=1
+   gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+   exclude=kube*
+   EOF
+
+3. configure linux to enter permissive mode  
+   sudo setenforce 0
+   sudo sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+
+4. Install kubernetes
+   sudo yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+
+
+5. enable and start kubelet
+   sudo systemctl enable --now kubelet
+
+6. initialise the controller node and set code network 
+   kubeadm init --pod-network-cidr=10.244.0.0/16
+
+
+7. on the admin node (node 1) check the status of the cluster
+  docker ps -a
+
+
+8. repeat above step on the worker nodes 
+  docker ps -a
+
+
+9. run the following command to start using the cluster
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   using the tokens that are generated to connect the worker nodes to the newly created kubernetes cluster
+
+--- create a pod ---
+
+1.   vim pod.yml 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-demo
+  labels:
+    app: nginx-demo
+spec:
+  containers:
+  - image: nginx:latest
+    name: nginx-demo
+    ports:
+    -  containerPort: 80
+    imagePullPolicy: Always 
+
+
+2. create the pod
+   kubectl create -f pod.yml 
+
+3. check the status of the pod
+   kubectl get pods
+
+
+
+--- create the kuberentes service ---
+
+1. create the service.yml file
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-demo
+spec:
+  selector:
+    app: nginx-demo
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+
+
+
+2. create the service 
+   kubectl apply -f service.yml
+
+
+3. to view the service run the following command
+   kubectl get services
+
+
+4. take note of the service port number - in a web browser navigate to the public ip address to verify connectivity 
+   <PUBLIC_IP_ADDRESS>:<SERVICE_DEMO_PORT_NUMBER>
+
+
+
+ 
