@@ -1,0 +1,90 @@
+scaling pods in kubernetes 
+
+--- create a kubernetes cluster with 1 master and 2 worker nodes ---
+
+
+1. initialise the cluster
+   kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=v1.11.3
+
+  copy and paste the following into the master node
+  mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+
+  retrieve the token to be used to connect the worker nodes like below:
+  kubeadm join 10.0.1.198:6443 --token akilht.c8xg1tdub9thto0d --discovery-token-ca-cert-hash sha256:4f28d8a536874346257fe33295a241f7cecc921c5617e90fce086a31543046cb
+
+
+--- install flannels on the master node --- 
+
+1. kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
+
+
+--- create deployment ---
+
+1. vim deployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-deployment
+  labels:
+    app: httpd
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: httpd
+  template:
+    metadata:
+      labels:
+        app: httpd
+    spec:
+      containers:
+      - name: httpd
+        image: httpd:latest
+        ports:
+        - containerPort: 80
+
+2. spin up the deployment 
+   kubectl create -f deployment.yml
+
+
+--- create the service ---
+
+1. vim service.yml 
+kind: Service
+apiVersion: v1
+metadata:
+  name: service-deployment
+spec:
+  selector:
+    app: httpd
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
+
+
+--- scale the deployment up to 5 replicas ---
+
+1. vim deployment.yml 
+   change the replicas section from 3 to 5
+
+2. kubectl apply -f deployment.yml 
+
+
+
+--- scale the deployment back downt to 2 replicas ---
+
+1. vim deployment.yml 
+   change the replicas from 5 to 2 
+
+2. kubectl apply -f deployment 
+
+
+
+
+
