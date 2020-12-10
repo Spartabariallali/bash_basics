@@ -30,10 +30,21 @@
 6. initialise the controller node and set code network 
    kubeadm init --pod-network-cidr=10.244.0.0/16
 
+   copy and paste the token to connected all the worker nodes on the network:
+   run this command first:
+   To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  the copy and paste the token to on the worker nodes: 
+  kubeadm join 10.0.1.194:6443 --token ex2x3m.26ho7wv7sxqds1bu \
+    --discovery-token-ca-cert-hash sha256:77962ccf9e7287499830de0c23ad7d3215ba983f041398c8ffadd891bc
 
 7. on the admin node (node 1) check the status of the cluster
   docker ps -a
-
+  
 
 8. repeat above step on the worker nodes 
   docker ps -a
