@@ -1,0 +1,64 @@
+Docker Network
+
+--- the host network driver ---
+
+The Host network driver allows containers to use the hosts network stack directly
+- containers use the hosts networking resources directly 
+- no sandboxes, all containers on the host using the host driver share the same network namespace 
+- no two containers can use the same port 
+
+docker run -d --net host --name host_busybox radial/busyboxplus:curl sleep 3600
+docker run -d --net host --name host_nginx nginx
+ip add | grep eth0
+docker exec host_busybox ip add | grep eth0
+docker exec host_busybox curl localhost:80
+curl localhost:80
+
+
+
+--- bridge network --- 
+
+the bridge network driver uses linux bridge network to provide connectivity between containers on the same host. 
+- This is the default driver for containers running on a single host
+- creates a linux bridge for each docker network 
+- create a default linux bridge network called bridge0. containers automatically connect to this if no network is specified. 
+- use cases: isolated networking among containers on a single host
+
+
+ip link - shows the default bridge network driver 
+docker network create --driver bridge my-bridge-net
+ip link
+docker run -d --name bridge_nginx --network my-bridge-net nginx
+docker run --rm --name bridge_busybox --network my-bridge-net radial/busyboxplus:curl curl bridge_nginx:80
+
+
+--- Overlay --- 
+
+The overlay network driver provides connectivity between containers accross multiple docker hosts, for example when docker swarm is used
+- uses VXLAN data plane, which allows the underlying network infrastructure to route data between hosts in a way that is transparent to the containers themselves
+- automatically configures network interfaces,bridges on each host as needed
+- networking between containers in a swarm 
+
+
+docker network create --driver overlay my-overlay-net
+docker service create --name overlay_nginx --network my-overlay-net nginx
+docker service create --name overlay_busybox --network my-overlay-net radial/busyboxplus:curl sh -c 'curl overlay_nginx:80 && sleep 3600'
+docker service logs overlay_busybox
+
+
+--- MACVLAN --- 
+ The MACVLAN driver offers a more lightweight implementation by connecting containers interfaces directly to host interfaces 
+
+
+docker network create -d macvlan --subnet 192.168.0.0/24 --gateway 192.168.0.1 -o parent=eth0 my-macvlan-net
+docker run -d --name macvlan_nginx --net my-macvlan-net nginx
+docker run --rm --name macvlan_busybox --net my-macvlan-net radial/busyboxplus:curl curl 192.168.0.2:80
+
+
+
+
+
+
+
+
+
