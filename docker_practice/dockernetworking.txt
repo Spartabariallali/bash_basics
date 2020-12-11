@@ -19,6 +19,48 @@
 3. docker run -d --name web2 --network test_application httpd:2.4 
 4. docker inspect 
 
+
+1. 
+
+docker network create my-net
+docker run -d --name my-net-busybox --network my-net radial/busyboxplus:curl sleep 3600
+docker run -d --name my-net-nginx nginx
+docker network connect my-net my-net-nginx
+docker exec my-net-busybox curl my-net-nginx:80
+
+2.create a container with a network alias and communicate with it from another container using both name and alias 
+
+docker run -d --name my-net-nginx2 --network my-net --network-alias my-nginx-alias nginx
+docker exec my-net-busybox curl my-net-nginx2:80
+docker exec my-net-busybox curl my-nginx-alias:80
+
+
+3. create a container and provide a network alias with the "docker network connect" command
+
+docker run -d --name my-net-nginx3 nginx
+docker network connect --alias another-alias my-net my-net-nginx3
+docker exec my-net-busybox curl another-alias:80
+
+4. Manage existing networks on a Docker host.
+
+docker network ls
+docker network inspect my-net
+docker network disconnect my-net my-net-nginx
+docker network rm my-net
+
+
+--- Deploying a service on a Docker Overlay Network ---
+
+1. Docker network ls 
+2. docker network create --driver overlay --attatchable my-overlay
+3. docker service create --name overlay-service --network my-overlay --replicas 3 nginx
+4. docker run --rm --network my-overlay radial/busyboxplus:curl curl overlay-service:80
+
+
+
+
+
+
 --- creating a host network ---
 
 1. docker run -d --name web3  --network host httpd:2.4
