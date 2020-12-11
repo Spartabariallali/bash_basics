@@ -1,0 +1,95 @@
+using terraform to create a docker volume and Network 
+
+--- create the terraform variable file --- 
+
+1. vim variables.tf 
+
+variable "container_name" {
+  description = "The MySQL container name."
+  default     = "mysql"
+}
+
+variable "mysql_root_password" {
+  description = "The MySQL root password."
+  default     = "P4sSw0rd0!"
+}
+
+variable "mysql_network_name" {
+  description = "The MySQL's network'."
+  default     = "mysql_internal_network"
+}
+
+variable "mysql_volume_name" {
+  description = "The MySQL's Volume'."
+  default     = "mysql_data"
+}
+
+
+
+2. create the image file 
+   vim image.tf 
+
+resource "docker_image" "mysql_image" {
+name = "mysql:5.7"
+}
+
+
+
+3. create the network file
+   vim network.tf 
+
+resource "docker_network" "private_bridge_network" {
+  name     = "${var.mysql_network_name}"
+  driver   = "bridge"
+  internal = true
+}
+
+
+
+4. create the volume file
+   vim volume.tf 
+
+resource "docker_volume" "mysql_data_volume" {
+  name = "${var.mysql_volume_name}"
+}
+
+
+
+5. create the main file 
+   vim main.tf 
+
+
+resource "docker_container" "mysl_container" {
+  name  = "${var.container_name}"
+  image = "${docker_image.mysql_image.name}"
+  env   = [
+    "MYSQL_ROOT_PASSWORD=${var.mysql_root_password}"
+  ]
+  volumes {
+    volume_name    = "${docker_volume.mysql_data_volume.name}"
+    container_path = "/var/lib/mysql"
+  }
+  networks_advanced {
+    name    = "${docker_network.private_bridge_network.name}"
+  }
+}
+
+
+6. deploy the infrastructure 
+   terraform init
+   terraform validate
+   terraform plan -out-tfplan
+   terraform apply tfplan
+
+
+
+--- viewing the docker volume and netowrk ---
+
+
+docker volume inspect mysql_data 
+
+sudo ls 
+/var/lib/docker/volumes.mysql_data/_data 
+
+
+
