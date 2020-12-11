@@ -1,0 +1,23 @@
+Deploying Docker Images Using Terraform 
+
+--- create a terraform file ---
+
+1. create main.tf 
+   vim main.tf
+resource "docker_image" "nginx_image" {
+  name = "nginx:latest"
+}
+
+2. intialise the deployment 
+   terraform init 
+
+3. plan the deployment 
+   terraform plan -out=tf_image_plan
+
+
+4. apply the terraform plan 
+   terraform apply tf_image_plan 
+
+
+
+
