@@ -1,0 +1,45 @@
+Docker container Monitoring wih Prometheus 
+
+--- set up cAdvisor to expose metrics ---
+
+1. run cAdvisor in a container 
+
+docker run -d --restart always --name cadvisor -p 8080:8080 -v "/:/rootfs:ro" -v "/var/run:/var/run:rw" -v "/sys:/sys:ro" -v "/var/lib/docker/:/var/lib/docker:ro" google/cadvisor:latest
+
+2. verify you can query cAdvisor for metrics
+
+curl localhost:8080/metrics
+
+
+--- configure prometheus to scrape Docker container metrics from cAdvisor ---
+
+1. log into the prometheus server:
+   ssh cloud_user@<PROMETHEUS_SERVER_PUBLIC_IP>
+
+
+2. edit the prometheus config:
+   sudo vim /etc/prometheus/prometheus.yml 
+
+3. under the scrape_configs section and a scrape configuration for cAdvisor
+   - job_name: 'Docker Containers'
+  static_configs:
+  - targets: ['limedrop-docker:8080']
+
+4. restart prometheus to load the new configuration 
+   sudo systemctl restart prometheus
+
+5. access the expression browser in a web browser at 
+   http://<PROMETHEUS_SERVER_PUBLIC_IP>:9090
+
+6. run a query to view some docker container metrics data:
+   container_memory_usage_bytes{name=~"web."}
+
+
+
+
+
+
+
+
+
+
