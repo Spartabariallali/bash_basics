@@ -1,0 +1,27 @@
+creating persistent data volumes with docker 
+
+--- obtain the application source file ---
+
+1. git clone https://github.com/linuxacademy/content-dockerquest-spacebones.git
+
+--- create a volume ---
+
+1. docker volume create missionstatus
+
+2. docker volume ls 
+
+3. docker volume inspect missionstatus 
+
+
+--- copy website data to the volume ---
+
+1. $ sudo -i
+$ cp -r /home/cloud_user/content-dockerquest-spacebones/volumes/* /var/lib/docker/volumes/missionstatus/_data/
+
+
+--- create a container ---
+
+1. docker run -d -p 80:80 --name fishin-mission \
+    --mount source=missionstatus,target=/usr/local/apache2/htdocs httpd
+
+
