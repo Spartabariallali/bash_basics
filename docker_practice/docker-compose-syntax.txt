@@ -1,0 +1,31 @@
+docker-compose syntax 
+
+specify the version of docker-composed to be used 
+
+version: "3"
+
+services represent the containers that will be created in the application
+services:
+  # name of the container(s) that will be created
+  # services correspond to your application components
+  # different services will have different images 
+  app:
+  # the app service
+  # build - specify how to build the container "." build it from the dockerfile in the current directory
+  # links - link to the database container (db) using the specified image "postgres"
+  # ports - map the external port 8000 to the internal port 80 
+
+
+version: "3"
+service:
+  # configuration options that are applied at run time
+  webapp:
+    build:./dir
+      # either a path to a directory containing a dockerfile or a url to a git repository 
+      context: ./
+      # network - set connection of the containers for the RUN instructions during build 
+  # container_name - set the name of the container
+  container_name: example_container_name 
+
+      
+     

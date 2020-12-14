@@ -1,0 +1,27 @@
+Internet protocal version 4 - ipv4 
+
+IP - internet protocal that allows computers on a network to communicate with each other. 
+
+ip establishes the data unit that is transferred between hosts usually a packet.
+it also provides addressing for the hosts on the network to identify and locate them.
+provides mechanisms for routing these packets between different hosts
+
+
+ipv4 is a 32 bit address 
+- contains 4 sections that are made up of 8 bits each (32 in total)
+- each 8-bit section is known as byte or octet
+- each octote can be converted to a decimal number between 0 and 255
+-  most common way of presenting an ipv4 address dotted decimal notation 
+- the number of ipv4 addresses is = 2^32 or just over 4 billion
+
+internet protocal version 6 - ipv6 
+
+- ipv6 creation was motivated on the fact that ipv4 ip address allocation could be exhausted. 
+- ipv6 128-bit address 
+- contains 8 sections that are made up of 16 bits (128 in total)
+- refered to as a nibble
+-  possible ip address with ipv6 amounts to = 2^128 
+
+--- network addressing architectures --- 
+
+
