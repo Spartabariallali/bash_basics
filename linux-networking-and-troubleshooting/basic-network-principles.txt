@@ -1,0 +1,16 @@
+MAC address - unique fingerprint of the network interface 
+ip address - unique address of your device on a network
+subnet - seperates the ip address into network and host addresses 
+gateway - the connection leading outside of the local network 
+dns host - translates hostname into ip addresses 
+dns domain - the lookup domain for the host 
+
+
+centOS -7 
+nmcli -network manager client 
+nmcli -d 
+
+nmcli c show
+nmcli d show ens5 
+
+
