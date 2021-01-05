@@ -24,4 +24,16 @@ internet protocal version 6 - ipv6
 
 --- network addressing architectures --- 
 
+ipv4 classes 
+
+class a 0---
+class b 10--
+class c 110-  first 3 octets are for the ip address and the last octet refers to the host 
+class d 1110
+class e 1111
+
+
+
+
+
 
