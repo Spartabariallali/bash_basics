@@ -1,0 +1,9 @@
+*** creating volumes ***
+
+1. docker volume create html-volume 
+
+2. docker container run -d \
+ --name nginx-volume1 \
+ --mount type=volume,source=html-volume,target=/usr/share/nginx/html/ \
+ nginx
+
